@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAC SPACE ASTRONOMY CREATOR</title>
+  <style>
+    :root{
+      --bg0:#050610;
+      --bg1:#090a18;
+      --text:#e9ecff;
+      --muted:#a9b2e6;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.09);
+      --stroke: rgba(255,255,255,.14);
+      --glow: rgba(130, 170, 255, .45);
+      --glow2: rgba(255, 120, 225, .35);
+      --a:#7c5cff;
+      --b:#29d3ff;
+      --c:#ff4fd8;
+      --ok:#3cffb3;
+      --warn:#ffd36b;
+      --danger:#ff5d7a;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 70% -10%, rgba(124,92,255,.25), transparent 60%),
+                  radial-gradient(900px 500px at 20% 0%, rgba(41,211,255,.18), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    /* ========== Space animation layer ========== */
+    .space{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-2;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(124,92,255,.18) 0 3px, transparent 4px),
+        radial-gradient(circle at 80% 25%, rgba(41,211,255,.18) 0 2px, transparent 3px),
+        radial-gradient(circle at 55% 75%, rgba(255,79,216,.15) 0 3px, transparent 4px);
+      filter: saturate(1.1);
+    }
+
+    .stars, .stars2{
+      position:absolute;
+      inset:-10%;
+      background-repeat: repeat;
+      transform: translateZ(0);
+      opacity:.6;
+      animation: drift 26s linear infinite;
+    }
+    .stars{
+      background-image:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.9) 40%, transparent 42%),
+        radial-gradient(1px 1px at 70% 60%, rgba(210,225,255,.95) 40%, transparent 42%),
+        radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,.8) 40%, transparent 42%);
+      background-size: 260px 260px;
+    }
+    .stars2{
+      opacity:.35;
+      animation-duration: 46s;
+      animation-direction: reverse;
+      background-image:
+        radial-gradient(2px 2px at 10% 20%, rgba(180,210,255,.95) 40%, transparent 42%),
+        radial-gradient(1px 1px at 55% 40%, rgba(255,160,235,.85) 40%, transparent 42%),
+        radial-gradient(1.3px 1.3px at 85% 70%, rgba(255,255,255,.8) 40%, transparent 42%);
+      background-size: 320px 320px;
+    }
+
+    @keyframes drift{
+      0%{ transform: translate3d(0,0,0) scale(1); }
+      100%{ transform: translate3d(-2%, 2%, 0) scale(1.02); }
+    }
+
+    /* nebula glow */
+    .nebula{
+      position:absolute;
+      width:900px;
+      height:900px;
+      left:-220px;
+      top:-260px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(124,92,255,.35), transparent 55%),
+        radial-gradient(circle at 65% 50%, rgba(41,211,255,.22), transparent 55%),
+        radial-gradient(circle at 55% 70%, rgba(255,79,216,.18), transparent 55%);
+      filter: blur(18px) saturate(1.2);
+      opacity:.9;
+      animation: neb 12s ease-in-out infinite;
+    }
+    @keyframes neb{
+      0%,100%{ transform: translate(0,0) scale(1); }
+      50%{ transform: translate(40px, 25px) scale(1.03); }
+    }
+
+    .container{
+      width:min(1100px, 92vw);
+      margin: 0 auto;
+      padding: 28px 0 60px;
+      position:relative;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-top: 10px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .logo{
+      width:52px; height:52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(41,211,255,.9));
+      box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 10px 35px rgba(124,92,255,.22);
+      position:relative;
+      overflow:hidden;
+      animation: floaty 4.2s ease-in-out infinite;
+    }
+    .logo::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 40% 40%, rgba(255,255,255,.65), transparent 45%);
+      transform: rotate(25deg);
+      animation: shimmer 2.4s ease-in-out infinite;
+    }
+    @keyframes shimmer{
+      0%,100%{ transform: translateX(-8%) rotate(25deg); opacity:.6; }
+      50%{ transform: translateX(10%) rotate(25deg); opacity:1; }
+    }
+    @keyframes floaty{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-6px); }
+    }
+
+    h1{
+      font-size: clamp(20px, 3.4vw, 30px);
+      margin:0;
+      line-height:1.15;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pillrow{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .pill{
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      font-size: 12.5px;
+      backdrop-filter: blur(8px);
+    }
+    .pill strong{
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .hero{
+      margin-top: 22px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 18px;
+      align-items:start;
+    }
+    @media (max-width: 900px){
+      .hero{ grid-template-columns: 1fr; }
+    }
+
+    .glass{
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .welcome{
+      padding: 18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .welcome::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(700px 240px at 0% 0%, rgba(124,92,255,.22), transparent 60%),
+        radial-gradient(600px 220px at 100% 0%, rgba(41,211,255,.18), transparent 60%),
+        radial-gradient(520px 200px at 50% 110%, rgba(255,79,216,.12), transparent 55%);
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    .welcome > *{ position:relative; z-index:1; }
+
+    .welcome h2{
+      margin:0 0 10px;
+      font-size: 18px;
+    }
+    .welcome p{
+      margin:0 0 14px;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
+    /* Form */
+    form{
+      margin-top: 10px;
+      display:grid;
+      gap: 12px;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 520px){
+      .grid2{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      display:block;
+      font-size: 12.5px;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+
+    input, select, textarea{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(10,12,30,.35);
+      color: var(--text);
+      outline:none;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    }
+
+    input::placeholder, textarea::placeholder{
+      color: rgba(169,178,230,.65);
+    }
+
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(41,211,255,.45);
+      box-shadow: 0 0 0 4px rgba(41,211,255,.16);
+      transform: translateY(-1px);
+      background: rgba(10,12,30,.48);
+    }
+
+    textarea{
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    /* Premium card + animations */
+    .premiumCard{
+      padding: 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .premiumCard::before{
+      content:"";
+      position:absolute;
+      inset:-80px -120px auto -120px;
+      height: 220px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(124,92,255,.35) 30%,
+        rgba(41,211,255,.30) 55%,
+        rgba(255,79,216,.25) 75%,
+        transparent 100%);
+      transform: rotate(-10deg);
+      animation: sweep 4.5s ease-in-out infinite;
+      opacity:.7;
+      pointer-events:none;
+    }
+    @keyframes sweep{
+      0%,100%{ transform: translateX(-10%) rotate(-10deg); opacity:.35; }
+      50%{ transform: translateX(15%) rotate(-10deg); opacity:.9; }
+    }
+
+    .premiumTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom: 12px;
+      position:relative; z-index:1;
+    }
+    .tagPremium{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 12.5px;
+      letter-spacing:.2px;
+    }
+    .spark{
+      width:10px; height:10px;
+      background: radial-gradient(circle, rgba(255,255,255,.95), rgba(255,79,216,.6));
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255,79,216,.45);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{ transform: scale(1); opacity:.75; }
+      50%{ transform: scale(1.25); opacity:1; }
+    }
+
+    .memberCard{
+      position:relative; z-index:1;
+      border-radius: 18px;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.14);
+      overflow:hidden;
+      transform: translateZ(0);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .memberCard:hover{
+      transform: translateY(-4px);
+      box-shadow: 0 25px 70px rgba(124,92,255,.18);
+    }
+
+    .row{
+      display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
+      margin-bottom: 10px;
+    }
+    .avatar{
+      width:46px; height:46px;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), transparent 40%),
+        linear-gradient(135deg, rgba(124,92,255,.95), rgba(41,211,255,.8));
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 10px 30px rgba(124,92,255,.22);
+      display:flex; align-items:center; justify-content:center;
+      font-weight: 900;
+      letter-spacing: .5px;
+    }
+
+    .k{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .v{
+      font-size: 14px;
+      font-weight: 800;
+      line-height:1.4;
+      word-break: break-word;
+    }
+
+    .statgrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .stat{
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      min-height: 62px;
+    }
+    .stat .label{
+      margin:0;
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+    .stat .value{
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing:.15px;
+    }
+
+    .actions{
+      display:flex;
+      gap: 12px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+      position:relative;
+      z-index:1;
+    }
+
+    .btn{
+      appearance:none;
+      border:0;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-weight: 800;
+      cursor:pointer;
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease, background .18s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+      text-decoration:none;
+      color: var(--text);
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .btn:hover{ transform: translateY(-2px); box-shadow: 0 18px 50px rgba(0,0,0,.35); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(41,211,255,.85));
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 18px 60px rgba(124,92,255,.18);
+    }
+    .btnPrimary:hover{
+      filter: brightness(1.05);
+      box-shadow: 0 22px 75px rgba(41,211,255,.18);
+    }
+
+    .btnSoft{
+      background: rgba(255,255,255,.06);
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(18px);
+      background: rgba(10,12,30,.82);
+      border: 1px solid rgba(255,255,255,.16);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 16px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .25s ease, transform .25s ease;
+      z-index: 50;
+      max-width: 92vw;
+      text-align:center;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    footer{
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 12.5px;
+      text-align:center;
+    }
+
+    /* Smooth entrance */
+    .fadeIn{
+      opacity:0;
+      transform: translateY(10px);
+      animation: in .6s ease forwards;
+    }
+    @keyframes in{
+      to{ opacity:1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="space" aria-hidden="true">
+    <div class="nebula"></div>
+    <div class="stars"></div>
+    <div class="stars2"></div>
+  </div>
+
+  <div class="container">
+    <header class="fadeIn">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Selamat Datang <span style="color:rgba(41,211,255,.95);">SAC</span> SPACE ASTRONOMY CREATOR</h1>
+          <div class="subtitle">Buat perkenalanmu & dapatkan akses masuk ke grup WhatsApp anggota.</div>
+        </div>
+      </div>
+
+      <div class="pillrow">
+        <div class="pill"><strong>Premium Feel</strong> ✦ mulus & futuristik</div>
+        <div class="pill"><strong>Space Anim</strong> ✦ semesta bergerak</div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <!-- Kiri: Form -->
+      <div class="glass welcome fadeIn" style="animation-delay:.1s">
+        <h2>Perkenalkan diri dulu, ya ✨</h2>
+        <p>
+          Isi data di bawah untuk membuat kartu anggota otomatis. Setelah itu, tekan tombol <b>Gabung SAC</b>.
+        </p>
+
+        <form id="joinForm">
+          <div class="grid2">
+            <div>
+              <label for="nama">Nama lengkap</label>
+              <input id="nama" name="nama" type="text" placeholder="Contoh: Ahmad Fauzi" required />
+            </div>
+            <div>
+              <label for="usia">Usia</label>
+              <input id="usia" name="usia" type="number" min="1" max="120" placeholder="Contoh: 17" required />
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div>
+              <label for="tgl_lahir">Tanggal lahir</label>
+              <input id="tgl_lahir" name="tgl_lahir" type="date" required />
+            </div>
+
+            <div>
+              <label for="jk">Jenis kelamin</label>
+              <select id="jk" name="jk" required>
+                <option value="" selected disabled>Pilih...</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="tiktok">Username TikTok</label>
+            <input id="tiktok" name="tiktok" type="text" placeholder="@username" required />
+          </div>
+
+          <div>
+            <label for="asal">Asal dari mana</label>
+            <input id="asal" name="asal" type="text" placeholder="Contoh: Surabaya, Jawa Timur" required />
+          </div>
+
+          <div>
+            <label for="alasan">Alasan bergabung</label>
+            <textarea id="alasan" name="alasan" placeholder="Ceritakan singkat alasanmu..." required></textarea>
+          </div>
+
+          <div class="actions">
+            <!-- Tombol Gabung -->
+            <button class="btn btnPrimary" type="button" id="btnGabung">
+              <span aria-hidden="true">🚀</span> Gabung SAC
+            </button>
+
+            <!-- Tombol untuk "Premiun feel" / anim lain -->
+            <button class="btn btnSoft" type="button" id="btnPremium">
+              <span aria-hidden="true">💎</span> Premium Mode
+            </button>
+          </div>
+
+          <div class="k" style="margin-top:10px;">
+            * Setelah klik <b>Gabung SAC</b>, kamu akan diarahkan ke grup WhatsApp.
+          </div>
+        </form>
+      </div>
+
+      <!-- Kanan: Kartu Anggota -->
+      <div class="glass premiumCard fadeIn" style="animation-delay:.22s">
+        <div class="premiumTitle">
+          <div class="tagPremium">
+            <span class="spark" aria-hidden="true"></span>
+            Kartu Anggota Preview
+          </div>
+          <div class="k" id="statusKartu">Belum diisi</div>
+        </div>
+
+        <div class="memberCard" id="memberCard">
+          <div class="row">
+            <div class="avatar" id="avatarText" aria-hidden="true">S</div>
+            <div style="flex:1;">
+              <div class="k">Anggota Baru • SAC</div>
+              <div class="v" id="cardNama">Nama lengkap</div>
+              <div class="k" id="cardSub">Space Astronom & Creator</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="k">Badge</div>
+              <div class="v" id="badge">Basic</div>
+            </div>
+          </div>
+
+          <div class="statgrid">
+            <div class="stat">
+              <p class="label">Usia</p>
+              <div class="value" id="cardUsia">-</div>
+            </div>
+            <div class="stat">
+              <p class="label">Jenis kelamin</p>
+              <div class="value" id="cardJK">-</div>
+            </div>
+            <div class="stat">
+              <p class="label">TikTok</p>
+              <div class="value" id="cardTik">-</div>
+            </div>
+            <div class="stat">
+              <p class="label">Asal</p>
+              <div class="value" id="cardAsal">-</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <div class="k">Alasan bergabung</div>
+            <div class="v" id="cardAlasan" style="font-size:13px; font-weight:750; color:rgba(233,236,255,.95);">
+              -
+            </div>
+          </div>
+
+          <div style="margin-top: 12px; color: var(--muted); font-size: 12.5px;">
+            <span id="cardTgl" style="display:inline-block; padding:6px 10px; border:1px solid rgba(255,255,255,.12); border-radius:999px; background:rgba(255,255,255,.05);">
+              Tanggal lahir: -
+            </span>
+          </div>
+        </div>
+
+        <footer>
+          © <span id="year"></span> SAC SPACE ASTRONOMY CREATOR • semesta di layar, komunitas di dunia nyata.
+        </footer>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Notifikasi</div>
+
+  <script>
+    // Link WhatsApp dari user (tidak bisa diverifikasi isinya, tapi dipakai sebagai target tombol)
+    const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/BtgbngoQgOCJu7ua37WEOy";
+
+    const form = document.getElementById('joinForm');
+
+    const el = (id) => document.getElementById(id);
+
+    const fields = {
+      nama: el('nama'),
+      usia: el('usia'),
+      tgl: el('tgl_lahir'),
+      jk: el('jk'),
+      tiktok: el('tiktok'),
+      asal: el('asal'),
+      alasan: el('alasan')
+    };
+
+    const card = {
+      nama: el('cardNama'),
+      usia: el('cardUsia'),
+      jk: el('cardJK'),
+      tik: el('cardTik'),
+      asal: el('cardAsal'),
+      alasan: el('cardAlasan'),
+      tgl: el('cardTgl'),
+      status: el('statusKartu'),
+      badge: el('badge'),
+      avatar: el('avatarText'),
+    };
+
+    const toast = el('toast');
+    const s
